@@ -6,9 +6,9 @@
  to you under the Apache License, Version 2.0 (the
  "License"); you may not use this file except in compliance
  with the License.  You may obtain a copy of the License at
-
+ 
  http://www.apache.org/licenses/LICENSE-2.0
-
+ 
  Unless required by applicable law or agreed to in writing,
  software distributed under the License is distributed on an
  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -22,14 +22,26 @@
 #import <Cordova/CDVScreenOrientationDelegate.h>
 
 #ifdef __CORDOVA_4_0_0
-    #import <Cordova/CDVUIWebViewDelegate.h>
+#import <Cordova/CDVUIWebViewDelegate.h>
 #else
-    #import <Cordova/CDVWebViewDelegate.h>
+#import <Cordova/CDVWebViewDelegate.h>
 #endif
+
+@protocol CloseOfHide <NSObject>
+
+@required
+-(void)closeOfHide;
+
+@end
+
+
+
+
 
 @class CDVInAppBrowserViewController;
 
-@interface CDVInAppBrowser : CDVPlugin {
+@interface CDVInAppBrowser : CDVPlugin <CloseOfHide>
+{
 }
 
 @property (nonatomic, retain) CDVInAppBrowserViewController* inAppBrowserViewController;
@@ -40,7 +52,8 @@
 - (void)close:(CDVInvokedUrlCommand*)command;
 - (void)injectScriptCode:(CDVInvokedUrlCommand*)command;
 - (void)show:(CDVInvokedUrlCommand*)command;
-
+- (void)hide:(CDVInvokedUrlCommand*)command;
+- (void)hiddToShow:(CDVInvokedUrlCommand*)command;
 @end
 
 @interface CDVInAppBrowserOptions : NSObject {}
@@ -68,7 +81,7 @@
 @end
 
 @interface CDVInAppBrowserViewController : UIViewController <UIWebViewDelegate, CDVScreenOrientationDelegate>{
-    @private
+@private
     NSString* _userAgent;
     NSString* _prevUserAgent;
     NSInteger _userAgentLockToken;
@@ -93,6 +106,7 @@
 @property (nonatomic, weak) id <CDVScreenOrientationDelegate> orientationDelegate;
 @property (nonatomic, weak) CDVInAppBrowser* navigationDelegate;
 @property (nonatomic) NSURL* currentURL;
+@property (nonatomic,strong) id <CloseOfHide> CloseOfHideDelegate;
 
 - (void)close;
 - (void)navigateTo:(NSURL*)url;
